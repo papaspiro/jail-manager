@@ -1,3 +1,7 @@
+#ra = ResidentialAddress(county="rr",address_area='Tema',address_locality='comm3',address_street="lovehill",address_housenumber ="1234")
+#pa = PostalAddress(country="ghana",city="accra",zipcode="0000",box_number="563")
+
+
 ''' @app.route('/upload', methods=['GET', 'POST'])
  def upload():
     if request.method == 'POST':
