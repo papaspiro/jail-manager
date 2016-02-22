@@ -4,6 +4,8 @@ from app import db
 #  as Serializer, BadSignature, SignatureExpired)
 #	from flask import current_app
 # Define a base model for other database tables to inherit
+
+
 class Base(db.Model):
     __abstract__  = True
     id = db.Column(db.Integer, primary_key=True)
