@@ -13,7 +13,7 @@ class Base(db.Model):
    # date_modified = db.Column(db.DateTime,  default=db.func.current_timestamp(),onupdate=db.func.current_timestamp())
     #updated_on = db.Column(db.DateTime,  default=db.func.now(), onupdate=db.func.now())
 
-class Role(Base):
+'''class Role(Base):
         id = db.Column(db.Integer,primary_key=True)
         rolename = db.Column(db.String(64))
         users = db.relationship('User',backref="role")
@@ -38,6 +38,8 @@ class User(Base):
                 #s = Serializer(current_app.config['SECRET_KEY'],expires=expiration)
 
                 return s.dumps({'id',self.id})
+'''
+
 
 class Inmate(db.Model):
 	id = db.Column(db.Integer,primary_key=True)
@@ -56,6 +58,7 @@ class Inmate(db.Model):
 	place_of_birth_country = db.Column(db.String(100))
 	place_of_birth_region = db.Column(db.String(100))
 	place_of_birth_locality = db.Column(db.String(100))
+
 	language = db.Column(db.String(100))
 	education = db.Column(db.String(100))
 
@@ -65,20 +68,21 @@ class Inmate(db.Model):
  
 
 	#administrative data
-	date_of_admission = db.Column(db.Date())
-	place_of_conviction = db.Column(db.String())
 	offence = db.Column(db.String(100))
+	place_of_conviction = db.Column(db.String())
+	
 	date_of_sentence = db.Column(db.Date())
 	sentence_years = db.Column(db.Integer())
 	sentence_months = db.Column(db.Integer())
 	sentence_days = db.Column(db.Integer()) 
-	block_cell = db.Column(db.String())
+
+	date_of_admission = db.Column(db.Date())
+	block_cell = db.Column(db.String(10))
 
 	#foreignkeys
 	residential_address_id = db.Column(db.Integer,db.ForeignKey('residential_address.id'))
 	#release_address_id = db.Column(db.Integer,db.ForeignKey('residential_address.id'))
 	postal_address_id = db.Column(db.Integer,db.ForeignKey('postal_address.id'))
-
 
 
 	#relationships
@@ -90,8 +94,52 @@ class Inmate(db.Model):
 	address_on_release = db.relationship("ResidentialAddress",backref='inmate_release_residence')
 	postal_address = db.relationship('PostalAddress',backref='inmate_pobox')
 	
+	
 	def	__repr__(self):
 		return "Inmate : %s %s %s" %(self.serial_number,self.first_name,self.last_name)
+
+
+
+
+#postal address
+class PostalAddress(Base):
+	id = db.Column(db.Integer,primary_key=True)
+	country = db.Column(db.String(100))
+	region = db .Column(db.String(100))
+	city = db.Column(db.String(100))
+	zipcode = db.Column(db.String(100))
+	box_number = db.Column(db.String(30))
+	#inmate_id = db.Column(db.Integer,db.ForeignKey('inmate.id')))
+
+
+
+#Residential Address
+class ResidentialAddress(Base):
+	id = db.Column(db.Integer,primary_key=True)
+	country = db.Column(db.String(60))
+	region = db.Column(db.String(60))
+	area = db.Column(db.String(100))
+	locality = db.Column(db.String(100))
+	street = db.Column(db.String(100))
+	housenumber = db.Column(db.String(20))
+
+	'''addressCountry
+	address_region
+	address_locality
+	postOfficeBoxNumber
+	streetAddress
+	postalCode
+ra = ResidentialAddress(country="Ghana",region="Greater Accra",area="Ringway",locality="duncans",street="stuff",housenumber="12")
+
+inmate = Inmate(serial_number="123",first_name="isaaac",last_name='something',middle_name="middle",alias='isaac',date_of_birth=datetime.date(1922,12,12),gender="male",distinctive_marks="well built",picture="avartar",language="akan",education="secondary",date_of_admission==datetime.date(2010,10,10),place_of_conviction="accra",offence="muder",place_of_offence=datetime.date(2004,10,10),sentence_years=4,sentence_months=40,sentence_days=21,block_cell = "f/32")\
+pa = PostalAddress(country="Ghana",region="Greater Accra",city="Osu",zipcode='0000',box_number='an 10887')
+	'''	
+
+
+
+
+
+
 
 
 #the next of kin
@@ -103,8 +151,7 @@ class NextOfKin(Base):
 	postal_address_id = db.Column(db.Integer,db.ForeignKey('postal_address.id'))
 
 	#foreignkey
-	inmate_id = db.Column(db.ForeignKey('inmate.id',))
-	
+	inmate_id = db.Column(db.ForeignKey('inmate.id',))	
 	#relationship
 	postal_address = db.relationship('PostalAddress',backref="inmate_next_of_kin")
 
@@ -141,6 +188,7 @@ class Discharge(Base):
 
 class Property(Base):
 	id = db.Column(db.Integer(),primary_key=True)
+
 class Transfer(Base):
 	id = db.Column(db.Integer(),primary_key=True)
 	inmate_id = db.Column(db.Integer(), db.ForeignKey('inmate.id'))
@@ -150,51 +198,20 @@ class Transfer(Base):
 	items_accompanying_inmate = db.Column(db.String(200))
 
 
-#Residential Address
-class ResidentialAddress(Base):
-	id = db.Column(db.Integer,primary_key=True)
-	country = db.Column(db.String(60))
-	region = db.Column(db.String(60))
-	area = db.Column(db.String(100))
-	locality = db.Column(db.String(100))
-	street = db.Column(db.String(100))
-	housenumber = db.Column(db.String(20))
-
-	'''addressCountry
-	address_region
-	address_locality
-	postOfficeBoxNumber
-	streetAddress
-	postalCode
-ra = ResidentialAddress(country="Ghana",region="Greater Accra",area="Ringway",locality="duncans",street="stuff",housenumber="12")
-
-inmate = Inmate(serial_number="123",first_name="isaaac",last_name='something',middle_name="middle",alias='isaac',date_of_birth=datetime.date(1922,12,12),gender="male",distinctive_marks="well built",picture="avartar",language="akan",education="secondary",date_of_admission==datetime.date(2010,10,10),place_of_conviction="accra",offence="muder",place_of_offence=datetime.date(2004,10,10),sentence_years=4,sentence_months=40,sentence_days=21,block_cell = "f/32")\
-pa = PostalAddress(country="Ghana",region="Greater Accra",city="Osu",zipcode='0000',box_number='an 10887')
-	'''	
 
 
 
 from datetime import date
 
-#postal address
-class PostalAddress(Base):
-	id = db.Column(db.Integer,primary_key=True)
-	country = db.Column(db.String(100))
-	region = db .Column(db.String(100))
-	city = db.Column(db.String(100))
-	zipcode = db.Column(db.String(100))
-	box_number = db.Column(db.String(30))
-	#inmate_id = db.Column(db.Integer,db.ForeignKey('inmate.id')))
 
 
-
-ra = ResidentialAddress(country="Ghana",region="Greater Accra",area="Ringway",locality="duncans",street="stuff",housenumber="12")
+'''ra = ResidentialAddress(country="Ghana",region="Greater Accra",area="Ringway",locality="duncans",street="stuff",housenumber="12")
 
 pa = PostalAddress(country="Ghana",region="Greater Accra",city="Osu",zipcode='0000',box_number='an 10887')
 
 db.session.add(ra)
 db.session.add(pa)
-db.session.commit()
+db.session.commit()'''
 def add_inmate(ra,pa):
 	import datetime
 	inmate = Inmate(serial_number="123",first_name="isaaac",last_name='something',middle_name="middle",alias='isaac',

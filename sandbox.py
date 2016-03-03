@@ -103,3 +103,47 @@ if __name__ == '__main__':
 
  #api.add_resource(UploadImage, '/api/uploadimage/<string:fname>')
  #   <input type="file" name="file">
+
+
+
+from flask import Flask
+from flask import render_template,session ,send_from_directory
+from werkzeug import secure_filename
+from flask import request
+import os
+from flask import jsonify
+from config import UPLOAD_FOLDER
+
+application = Flask(__name__)
+
+
+@application.route('/')
+def hello():
+  return "<h1 style='color:blue'> hello world </h1>"
+
+
+if __name__ == "__main__":
+  application.run(host="0.0.0.0")
+
+
+
+'''
+
+@app.route('/upload',methods=['POST','PUT'])
+def upload():
+  file = request.files['picture']
+  #if request.method == 'GET':
+  filename = secure_filename(file.filename)
+  file.save(os.path.join(UPLOAD_FOLDER, filename))
+  return jsonify({"success":True})
+
+
+
+@app.route("/uploadform")
+def uploadform():
+  return render_template('sandbox.html')
+
+if __name__ == '__main__':
+  app.run(debug=True)
+
+  '''
