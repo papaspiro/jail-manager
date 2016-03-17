@@ -14,6 +14,12 @@ import uuid
 from flask import jsonify
 from config import UPLOAD_FOLDER
 
+
+
+from flask.ext.superadmin import BaseView, expose
+
+from app import admin
+
 #list of inmates with a query form
 #paginates through the lastest ten inmates added as default
 #and lattest ten inmates that matches a particular criteria
@@ -102,7 +108,7 @@ def add_inmate():
 		#residential_address
 		#address on release
 		#mext of kin
-		form
+		
 		#return render_template('/inmates/search.html',fname=first_name)
 	return render_template("/inmates/new.html",form=form)
 
@@ -118,3 +124,27 @@ def inmate(inmate_id):
 @inmate_blueprint.route('/edit',methods=['POST','GET'])
 def new_inmate(inmate_id):
 	return render_template('/inmates/update.html')
+
+
+'''
+#admin views
+class InmateAdmin(BaseView):
+	@expose('/')
+	def index(self):
+		return self.render('admin/index.html')
+
+'''
+
+
+from .models import *
+#admin = Admin(app)
+admin.register(Inmate,session=db.session)
+admin.register(PostalAddress,session=db.session)
+admin.register(ResidentialAddress,session=db.session)
+admin.register(PenalRecords,session=db.session)
+admin.register(PreviousConviction	,session=db.session)
+admin.register(Discharge,session=db.session)
+admin.register(Property,session=db.session)
+admin.register(Transfer	,session=db.session)
+
+

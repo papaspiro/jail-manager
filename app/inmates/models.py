@@ -137,11 +137,6 @@ pa = PostalAddress(country="Ghana",region="Greater Accra",city="Osu",zipcode='00
 
 
 
-
-
-
-
-
 #the next of kin
 class NextOfKin(Base):
 	id = db.Column(db.Integer,primary_key=True )
@@ -188,6 +183,9 @@ class Discharge(Base):
 
 class Property(Base):
 	id = db.Column(db.Integer(),primary_key=True)
+	inmate_id = db.Column(db.Integer(),db.ForeignKey('inmate.id'))
+	items = db.Column(db.String(500))
+
 
 class Transfer(Base):
 	id = db.Column(db.Integer(),primary_key=True)
@@ -196,8 +194,6 @@ class Transfer(Base):
 	station_transferred_to = db.Column(db.String(100))
 	reason_for_transfer = db.Column(db.String(200))
 	items_accompanying_inmate = db.Column(db.String(200))
-
-
 
 
 
