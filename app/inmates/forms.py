@@ -29,6 +29,7 @@ class InmateForm(Form):
 	place_of_birth_locality = StringField('Locality of Birth',validators=[DataRequired()])
 
 	education = StringField('Education',validators=[DataRequired()])
+
 	language = StringField('Language', validators=[DataRequired()])
 	place_of_offence_country = StringField('Country of Offence',validators=[DataRequired()])
 	place_of_offence_region = StringField('Region of Offence',validators=[DataRequired()])
@@ -45,23 +46,92 @@ class InmateForm(Form):
 
 	block_cell = StringField('Blocks /Cell',validators=[DataRequired()])
 
-	dt = DateField('DatePicker', format='%Y-%m-%d')
+	#dt = DateField('DatePicker', format='%Y-%m-%d')
 	#postal_address = StringField()
-	picture = FileField('picture')
+	picture = FileField('picture',)
 	submit = SubmitField('Submit')
 
 
 class PostalAddressForm(Form):
+	serial_number = StringField('Serial Number',validators=[ DataRequired()] )
 	country = StringField('Country',validators=[Required()])
 	region = StringField('Region',validators=[Required()])
 	city = StringField('City',validators=[Required()])
 	zip_code = StringField('Zip Code')
 	box_number = StringField('Box Number',validators=[Required])
+	submit = SubmitField('Submit')
+
 
 
 class ResidentalForm(Form):
+	serial_number = StringField('Serial Number',validators=[ DataRequired()] )
 	country = StringField('Country',validators=[Required()])
 	region = StringField('Region', validators=[Required()])
 	area = StringField('City',validators=[Required()])
 	locality = StringField('Locality',validators=[Required()])
+	submit = SubmitField('Submit')
+
+
+class NextOfKinForm(Form):
+	serial_number = StringField('Serial Number',validators=[ DataRequired()] )
+	first_name = StringField('First Name',validators=[ DataRequired()] )
+	middle_name = StringField('Middle Name',validators=[DataRequired()] )
+	last_name = StringField('Last Name',validators=[DataRequired()] )
+	alias = StringField('Relationship', validators =[DataRequired()])
+	telephone = StringField('Telephone',validators=[DataRequired])
+	
+	#contact address
+	country = StringField('Country',validators=[Required()])
+	region = StringField('Region',validators=[Required()])
+	city = StringField('City',validators=[Required()])
+	zip_code = StringField('Zip Code')
+	box_number = StringField('Box Number',validators=[Required])
+	
+	submit = SubmitField('Submit')
+
+
+
+class PenalRecordForm(Form):
+	serial_number = StringField('Serail Number',validators=[DataRequired()])
+	place_of_conviction = StringField('Place of Conviction',validators=[DataRequired()])
+	date_of_conviction = DateField('Date of Conviction',validators=[DataRequired()])
+	offence = StringField("Offence",validators=[DataRequired()])
+	remission = StringField("Remission",validators=[DataRequired()])
+	earliest_possible_discharge = DateField('Date of Admission',validators = [DataRequired()])
+	lattest_possible_discharge = DateField('Date of Sentence',validators=[DataRequired()])
+	submit = SubmitField('Submit')
+
+
+
+class PreviousConviction(Form):
+	serial_number = StringField('Serail Number',validators=[DataRequired()])
+	offence = StringField("Offence",validators=[DataRequired()])
+	sentence = StringField("Offence",validators=[DataRequired()])
+	place_of_conviction = StringField('Place of Conviction',validators=[DataRequired()])
+	date_of_conviction = DateField('Date of Conviction',validators=[DataRequired()])
+	submit = SubmitField('Submit')
+
+
+class DischargeForm(Form):
+	serial_number = StringField('Serial Number', validators=[DataRequired()])
+	items = TextAreaField('Items Accompanying Inmate',validators=[DataRequired()])
+	reason_for_discharge = StringField('Reason For Discharge',validators=[DataRequired()])
+	submit = SubmitField('Submit')
+
+
+class PropertyForm(Form):
+	serial_number = StringField('Serial Number', validators=[DataRequired()])
+	items = TextAreaField('Items' ,validators=[DataRequired()])
+	submit = SubmitField('Submit')
+
+
+class TransferForm(Form):
+	serial_number = StringField('Serial Number', validators=[DataRequired()])
+	date_of_transfer = DateField('Date of Transfer',validators=[DataRequired()])
+	station_transferred_to = StringField("Station Transfered To",validators=[DataRequired()])
+	reason_for_transfer = StringField("Reason For Transfer",validators=[DataRequired()])
+	items_accompanying_inmate = TextAreaField('Items Accompanying Inmate',validators=[DataRequired()])
+
+
+
 

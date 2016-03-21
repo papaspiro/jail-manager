@@ -74,9 +74,12 @@ def add_inmate():
 
 		inmate = Inmate(
 		serial_number = form.serial_number.data,
-		first_name = form.first_name.data ,last_name = form.last_name.data,
-		middle_name = form.middle_name.data,alias = form.alias.data,
-		date_of_birth = form.date_of_birth.data,gender = form.gender.data,
+		first_name = form.first_name.data ,
+		last_name = form.last_name.data,
+		middle_name = form.middle_name.data,
+		alias = form.alias.data,
+		date_of_birth = form.date_of_birth.data,
+		gender = form.gender.data,
 		distinctive_marks = form.distinctive_marks.data ,
 		picture = f_name ,#form.picture.data,
 		place_of_birth_country = form.place_of_birth_country.data,
@@ -110,6 +113,7 @@ def add_inmate():
 		#mext of kin
 		
 		#return render_template('/inmates/search.html',fname=first_name)
+		return redirect(url_for('add_inmate'))
 	return render_template("/inmates/new.html",form=form)
 
 
@@ -121,27 +125,28 @@ def inmate(inmate_id):
 
 
 #edit particular inmate
-@inmate_blueprint.route('/edit',methods=['POST','GET'])
+@inmate_blueprint.route('/inmate/edit',methods=['POST','GET'])
 def new_inmate(inmate_id):
 	return render_template('/inmates/update.html')
 
 
-'''
-#admin views
-class InmateAdmin(BaseView):
-	@expose('/')
-	def index(self):
-		return self.render('admin/index.html')
 
-'''
+
+@inmate_blueprint.route('/nextofkin',methods=['GET','POST'])
+def add_next_of_kin():
+	if request.method == "POST":
+		form = NextOfKinForm()
+		if form.validate_on_submit():
+			pass
 
 
 from .models import *
-#admin = Admin(app)
+
 admin.register(Inmate,session=db.session)
+admin.register(NextOfKin,session=db.session)
 admin.register(PostalAddress,session=db.session)
 admin.register(ResidentialAddress,session=db.session)
-admin.register(PenalRecords,session=db.session)
+admin.register(PenalRecord,session=db.session)
 admin.register(PreviousConviction	,session=db.session)
 admin.register(Discharge,session=db.session)
 admin.register(Property,session=db.session)
