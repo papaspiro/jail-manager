@@ -18,6 +18,8 @@ app.config.from_object('config')
 
 db = SQLAlchemy(app)
 bootstrap = Bootstrap(app)
+
+#supperadmin
 admin =  Admin(app,name='Jail Manager')
 
 
@@ -36,21 +38,10 @@ from app.mod_auth.views import mod_auth as auth_blueprint
 from app.inmates.views import inmate_blueprint as inmatebp
 from inmates.models import Inmate
 
+
 #register blueprints
 #app.register(db)
 #app.register(bootstrap)
-
-
-'''#admin views
-class InmateView(BaseView):
-	@expose('/')
-	def index(self):
-		return self.render('index.html')
-
-'''
-
-#admin.add_view(InmateView(name="Inmate Records"))
-#admin.add_view(ModelView(Inmate, db.session))
 
 
 

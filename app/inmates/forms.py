@@ -46,8 +46,6 @@ class InmateForm(Form):
 
 	block_cell = StringField('Blocks /Cell',validators=[DataRequired()])
 
-	#dt = DateField('DatePicker', format='%Y-%m-%d')
-	#postal_address = StringField()
 	picture = FileField('picture',)
 	submit = SubmitField('Submit')
 
