@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template ,flash ,redirect,request,g,session,url_for,Blueprint
 
-from app.inmates.forms import InmateForm
+from app.inmates.forms import *
 from app.inmates.models import Inmate
 from datetime import datetime
 from werkzeug import secure_filename
@@ -70,7 +70,7 @@ def add_inmate():
 
 			#todo find means to verify if upload was a success
 			file.save(os.path.join(UPLOAD_FOLDER,f_name))
-			#return jsonify({"hello":"world"		})
+
 
 		inmate = Inmate(
 		serial_number = form.serial_number.data,
@@ -131,13 +131,50 @@ def new_inmate(inmate_id):
 
 
 
-
 @inmate_blueprint.route('/nextofkin',methods=['GET','POST'])
 def add_next_of_kin():
+	form = NextOfKinForm()
 	if request.method == "POST":
-		form = NextOfKinForm()
 		if form.validate_on_submit():
-			pass
+			return redirect(url_for(add_next_of_kin,form=form))
+	return render_template('/inmates/nextofkin.html',form=form)
+
+
+
+
+
+@inmate_blueprint.route('/penalrecords',methods=['GET','POST'])
+def penal_record():
+	form = PenalRecordForm()
+	if request.method == "POST":
+		if form.validate_on_submit():
+			return redirect(url_for(penal_record,form=form))
+	return render_template('/inmates/penalrecords.html',form=form)
+
+
+
+@inmate_blueprint.route('/transfers',methods=['GET','POST'])
+def transfer():
+	form = TransferForm()
+	if request.method == "POST":
+		if form.validate_on_submit():
+			return redirect(url_for(transfer,form=form))
+	return render_template('/inmates/transfers.html',form=form)
+
+
+
+
+
+
+@inmate_blueprint.route('/discharge',methods=['GET','POST'])
+def discharge():
+	form = DischargeForm()
+	if request.method == "POST":
+		if form.validate_on_submit():
+			return redirect(url_for(discharge,form=form))
+	return render_template('/inmates/discharge.html',form=form)
+
+
 
 
 from .models import *

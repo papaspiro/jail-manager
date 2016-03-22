@@ -79,12 +79,16 @@ class NextOfKinForm(Form):
 	telephone = StringField('Telephone',validators=[DataRequired])
 	
 	#contact address
-	country = StringField('Country',validators=[Required()])
-	region = StringField('Region',validators=[Required()])
-	city = StringField('City',validators=[Required()])
+	residence_country = StringField('Country of Residence',validators=[Required()])
+	residence_region = StringField('Region of Residence',validators=[Required()])
+	residence_city = StringField('City of Residence',validators=[Required()])
 	zip_code = StringField('Zip Code')
-	box_number = StringField('Box Number',validators=[Required])
-	
+
+	postal_country = StringField('Postal Address Country',validators=[Required()])
+	postal_region = StringField('Postal Address of Region',validators=[Required()])
+	postal_city = StringField('Postal Address City',validators=[Required()])
+	postal_box = StringField('Postal Office Box Number',validators=[Required()])
+	postal_other = StringField('Postal Address other',validators=[Required()])	
 	submit = SubmitField('Submit')
 
 
@@ -113,7 +117,7 @@ class PreviousConviction(Form):
 class DischargeForm(Form):
 	serial_number = StringField('Serial Number', validators=[DataRequired()])
 	items = TextAreaField('Items Accompanying Inmate',validators=[DataRequired()])
-	reason_for_discharge = StringField('Reason For Discharge',validators=[DataRequired()])
+	reason_for_discharge = TextAreaField('Reason For Discharge',validators=[DataRequired()])
 	submit = SubmitField('Submit')
 
 
@@ -129,6 +133,8 @@ class TransferForm(Form):
 	station_transferred_to = StringField("Station Transfered To",validators=[DataRequired()])
 	reason_for_transfer = StringField("Reason For Transfer",validators=[DataRequired()])
 	items_accompanying_inmate = TextAreaField('Items Accompanying Inmate',validators=[DataRequired()])
+	submit = SubmitField('Submit')
+
 
 
 
