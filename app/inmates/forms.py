@@ -12,7 +12,17 @@ def edit_user(request, id):
     form = UserDetails(request.POST, obj=user)
     form.group_id.choices = [(g.id, g.name) for g in Group.query.order_by('name')]
 
+
+
+
+class UserForm(Form):
+	user_name = StringField('Username',validators=[DataRequired()])
+	password = StringField('Password',validators=[DataRequired()])
+	admin = BooleanField('Is Admin ?',validators=[DataRequired()])
+
+
 '''
+
 
 class InmateForm(Form):
 	serial_number = StringField('Serial Number',validators=[ DataRequired()] )

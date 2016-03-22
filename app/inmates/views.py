@@ -1,31 +1,29 @@
-from app import app
-from flask import render_template ,flash ,redirect,request,g,session,url_for,Blueprint
+from datetime import datetime
+import os
+import uuid
 
+from flask import render_template ,flash ,redirect,request,g,session,url_for,Blueprint
+from flask import jsonify
+from werkzeug import secure_filename
+from flask_admin.contrib.sqla import ModelView
+
+from app import app
+from app import db
+from app import admin
+
+from config import UPLOAD_FOLDER
 from app.inmates.forms import *
 from app.inmates.models import Inmate
-from datetime import datetime
-from werkzeug import secure_filename
+
+
+
 
 inmate_blueprint = Blueprint('inmates',__name__,url_prefix='/inmates')
 
-from app import db
-import os
-import uuid
-from flask import jsonify
-from config import UPLOAD_FOLDER
 
 
 
-from flask.ext.superadmin import BaseView, expose
 
-from app import admin
-
-#list of inmates with a query form
-#paginates through the lastest ten inmates added as default
-#and lattest ten inmates that matches a particular criteria
-#result features 
-#inmate url: link to image via serial number
-#inmate  last name, middle + other names , picture,link to next of kin, link to penal records,link to tranfers 
 
 def allowed_file(filename):
 	return  '.' in filename and  filename.rsplit('.',1)[1] in app.config['ALLOWED_EXTENSIONS']
@@ -141,8 +139,6 @@ def add_next_of_kin():
 
 
 
-
-
 @inmate_blueprint.route('/penalrecords',methods=['GET','POST'])
 def penal_record():
 	form = PenalRecordForm()
@@ -185,8 +181,23 @@ def property():
 
 
 
+#flask admin
+from .models import *
+admin.add_view(ModelView(Inmate,db.session))
+admin.add_view(ModelView(InmatePostalAddress,db.session))
+admin.add_view(ModelView(InmateResidentialAddress,db.session))
+admin.add_view(ModelView(InmateAddressOnDischarge,db.session))
+admin.add_view(ModelView(NextOfKin,db.session))
+'''
+admin.add_view(ModelView(Inmate,db.session))
+admin.add_view(ModelView(Inmate,db.session))
+admin.add_view(ModelView(Inmate,db.session))
+'''
 
 
+
+
+'''
 from .models import *
 
 admin.register(Inmate,session=db.session)
@@ -198,5 +209,5 @@ admin.register(PreviousConviction	,session=db.session)
 admin.register(Discharge,session=db.session)
 admin.register(Property,session=db.session)
 admin.register(Transfer	,session=db.session)
-
+'''
 
