@@ -163,9 +163,6 @@ def transfer():
 
 
 
-
-
-
 @inmate_blueprint.route('/discharge',methods=['GET','POST'])
 def discharge():
 	form = DischargeForm()
@@ -173,6 +170,19 @@ def discharge():
 		if form.validate_on_submit():
 			return redirect(url_for(discharge,form=form))
 	return render_template('/inmates/discharge.html',form=form)
+
+
+
+
+@inmate_blueprint.route('/property',methods=['GET','POST'])
+def property():
+	form = DischargeForm()
+	if request.method == "POST":
+		if form.validate_on_submit():
+			return redirect(url_for(property,form=form))
+	return render_template('/inmates/property.html',form=form)
+
+
 
 
 
