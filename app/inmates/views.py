@@ -1,29 +1,22 @@
 from datetime import datetime
 import os
 import uuid
+from flask_admin.form import SecureForm
 
-from flask import render_template ,flash ,redirect,request,g,session,url_for,Blueprint
+from flask import render_template ,flash ,redirect,request,g,session,url_for
 from flask import jsonify
 from werkzeug import secure_filename
 from flask_admin.contrib.sqla import ModelView
 
-from app import app
+#from app import app
 from app import db
 from app import admin
 
-from config import UPLOAD_FOLDER
+#from config import UPLOAD_FOLDER
 from app.inmates.forms import *
 from app.inmates.models import Inmate
 
-
-
-
-inmate_blueprint = Blueprint('inmates',__name__,url_prefix='/inmates')
-
-
-
-
-
+from app.inmates  import inmate_blueprint
 
 def allowed_file(filename):
 	return  '.' in filename and  filename.rsplit('.',1)[1] in app.config['ALLOWED_EXTENSIONS']
@@ -111,15 +104,16 @@ def add_inmate():
 		#mext of kin
 		
 		#return render_template('/inmates/search.html',fname=first_name)
-		return redirect(url_for('add_inmate'))
+		return redirect(url_for('.add_inmate'))
 	return render_template("/inmates/new.html",form=form)
 
 
 
 #a particular inmate
-@inmate_blueprint.route('/inmates/<inmate_id>',methods=['GET','Post'])
-def inmate(inmate_id):
-	return render_template('/inmates/inmate.html')
+@inmate_blueprint.route('/inmates/<serial_number>',methods=['GET','Post'])
+def inmate(inmate_serial_number):
+	inmate = Inmate.query.filter_by(serial_number=inmate_serial_number).first()
+	return render_template('/inmates/inmate.html',inmate=inmates)
 
 
 #edit particular inmate
@@ -175,7 +169,7 @@ def property():
 	form = DischargeForm()
 	if request.method == "POST":
 		if form.validate_on_submit():
-			return redirect(url_for(property,form=form))
+			return redirect(url_for('.property',form=form))
 	return render_template('/inmates/property.html',form=form)
 
 
@@ -183,11 +177,57 @@ def property():
 
 #flask admin
 from .models import *
-admin.add_view(ModelView(Inmate,db.session))
-admin.add_view(ModelView(InmatePostalAddress,db.session))
-admin.add_view(ModelView(InmateResidentialAddress,db.session))
-admin.add_view(ModelView(InmateAddressOnDischarge,db.session))
-admin.add_view(ModelView(NextOfKin,db.session))
+
+
+class InmateView(ModelView):
+	can_delete = False
+	page_size = 20
+	can_view_details = True
+	column_exclude_list = ['date_created','language','education','date_of_sentence','place_of_conviction',
+	'place_of_birth_country','place_of_birth_region','place_of_birth_locality','place_of_offence_country',
+	'place_of_offence_region','place_of_offence_locality','distinctive_marks']
+
+	column_searchable_list = ['serial_number','last_name','first_name','offence']
+
+	create_modal = True
+	edit_modal = True
+	form_exclude_columns = ['date_created','transfers','penal_record','property','previous_convictions'
+	,'discharge']
+
+
+	#inline_models = ['nextofkin']
+
+	def is_accessible(self):
+		return True
+		#return login.current_user.is_authenticated
+
+	def inacccesible_callback(self,name,**kwags):
+		#redirect to login into if user does nto have access
+		#log activity/user attempting and time of action 
+		return
+
+
+class NextOfKinView(ModelView):
+	can_delete = False
+	page_size = 20
+	can_view_details = True
+	column_exclude_list = ['date_created']
+
+
+admin.add_view(InmateView(Inmate,db.session))
+#admin.add_view(ModelView(InmatePostalAddress,db.session))
+#admin.add_view(ModelView(InmateResidentialAddress,db.session))
+#admin.add_view(NextOfKinView(NextOfKin,db.session))
+admin.add_view(ModelView(PenalRecord,db.session))
+admin.add_view(ModelView(Transfer,db.session))
+admin.add_view(ModelView(Discharge,db.session))
+
+
+
+
+
+
+
 '''
 admin.add_view(ModelView(Inmate,db.session))
 admin.add_view(ModelView(Inmate,db.session))
@@ -210,4 +250,8 @@ admin.register(Discharge,session=db.session)
 admin.register(Property,session=db.session)
 admin.register(Transfer	,session=db.session)
 '''
+
+
+
+
 

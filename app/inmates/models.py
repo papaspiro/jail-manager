@@ -9,8 +9,9 @@ class Base(db.Model):
 class User(db.Model):
 	id = db.Column(db.Integer,primary_key=True)
 	username = db.Column(db.String(60))
-	pwdhash = db.Column(db.String())
+	pwdhash = db.Column(db.String(60))
 	admin = db.Column(db.Boolean)
+	email  = db.Column(db.String(60))
 
 	def __init__(self,username,password,admin):
 		self.username = username
@@ -62,6 +63,8 @@ class Inmate(Base):
 		return str( self.serial_number)
 
 	
+
+
 
 #postal address
 class PostalAddress(Base):

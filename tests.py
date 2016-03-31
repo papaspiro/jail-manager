@@ -20,7 +20,7 @@ class InmateTestCase(unittest.TestCase):
 
 '''	
 	A test is supposed to run some function of the application that has a known outcome, 
-	and should assert if the result is different than the expected one.
+	and should assert if the result is different than the expected one.x
 '''
 
     def test_earliest_possible(self):
