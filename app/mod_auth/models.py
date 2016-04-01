@@ -7,7 +7,6 @@ class Base(db.Model):
 
 
 class User(Base):
-
 	__tablename__ = "auth_user"
 
 	name = db.Column(db.String(128),nullable=False)
