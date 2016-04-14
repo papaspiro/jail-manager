@@ -20,7 +20,7 @@ class Config:
 	MAIL_SUBJECT_PREFIX  = ['Jailer Manager']
 	MAIL_SENDER = 'Jailer Admin <admin@jailmanager.com>'
 	JAILER_ADMIN = os.environ.get('JAILER_ADMIN')
-	UPLOAD_FOLDER = 'app/uploads'
+	UPLOAD_FOLDER = 'static' #'app/uploads'
 	ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])	
 
 	@staticmethod
