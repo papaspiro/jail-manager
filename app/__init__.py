@@ -6,13 +6,13 @@ from flask.ext.login import LoginManager
 from flask.ext.mail import Mail
 from flask.ext.admin import Admin
 from flask.ext.moment import Moment
-
+from flask import send_from_directory
 from config import config
-
+import os
 
 db = SQLAlchemy()
 bootstrap = Bootstrap()
-admin =  Admin(name="Nsawam Penal System",template_mode='bootstrap3') #app,name='Jail Manager',template_mode='bootstrap3'
+admin =  Admin(name="Nsawam Prison MIS",template_mode='bootstrap3') #app,name='Jail Manager',template_mode='bootstrap3'
 moment = Moment()
 
 
@@ -20,6 +20,8 @@ def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     
+
+    app.config['UPLOAD_FOLDER'] = 'uploads'
     config[config_name].init_app(app)
     bootstrap.init_app(app)
     db.init_app(app)
@@ -34,6 +36,21 @@ def create_app(config_name):
     from inmates.models import Inmate
 
 
+    @app.route('/pic/<path:filename>')
+    def send_pic(filename):
+        return send_from_directory('/images',filename) 
+
+
+    @app.route('/uploads/<filename>')
+    def uploaded_file(filename):
+        return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
+
+
+    @app.route('/<path:path>')
+    def static_image(path):
+        return app.send_static_file(path)
+
+
     @app.errorhandler(404)
     def not_found(errorhandler):
         return render_template('404.html'),404
@@ -41,9 +58,15 @@ def create_app(config_name):
     @app.errorhandler(500)
     def internal_server_error(e):
         db.session.rollback()
-        return render_template('500.html'),500
 
-    
+
+
+    @app.route('/mypic/<path:filename>')
+    def serve_static(filename):
+        root_dir = os.path.dirname(os.getcwd())
+        return send_from_directory(os.path.join(root_dir, 'static'), filename)
+
+
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(inmatebp)
 

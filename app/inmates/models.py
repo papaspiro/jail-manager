@@ -42,15 +42,15 @@ class Inmate(Base):
 	language = db.Column(db.String(100))
 	education = db.Column(db.String(100))
 
+	
+ 
+	#administrative data
+	offence = db.Column(db.String(100))
 	place_of_offence_country = db.Column(db.String(100))
 	place_of_offence_region = db.Column(db.String(100))
 	place_of_offence_locality = db.Column(db.String(100))
- 
 
-	#administrative data
-	offence = db.Column(db.String(100))
 	place_of_conviction = db.Column(db.String())
-	
 	date_of_sentence = db.Column(db.Date())
 	sentence_years = db.Column(db.Integer())
 	sentence_months = db.Column(db.Integer())
@@ -219,7 +219,7 @@ class Property(Base):
 	items = db.Column(db.String(500))
 
 	#relationship
-	inmate = db.relationship('Inmate',foreign_keys=inmate_id,backref="property")
+	inmate = db.relationship(Inmate,foreign_keys=inmate_id,backref="property")
 
 
 class Transfer(Base):
@@ -231,7 +231,7 @@ class Transfer(Base):
 	items_accompanying_inmate = db.Column(db.String(300))
 
 	#relationship
-	inmate = db.relationship('Inmate',foreign_keys=inmate_id,backref="transfers")
+	inmate = db.relationship(Inmate,foreign_keys=inmate_id,backref="transfers")
 	
 
 

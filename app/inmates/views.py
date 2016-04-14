@@ -17,6 +17,15 @@ from app.inmates.forms import *
 from app.inmates.models import Inmate
 
 from app.inmates  import inmate_blueprint
+from flask import current_app
+
+from sqlalchemy.event import listens_for
+from jinja2 import Markup
+
+from flask_admin import form
+from flask_admin.form import rules
+from flask_admin.contrib import sqla
+
 
 def allowed_file(filename):
 	return  '.' in filename and  filename.rsplit('.',1)[1] in app.config['ALLOWED_EXTENSIONS']
@@ -178,24 +187,56 @@ def property():
 #flask admin
 from .models import *
 
-
+'''
+@app.route('/pic/<path:filename>')
+def send_pic(filename):
+    return send_from_directory('/path/to/static/files', filename)
+'''
 class InmateView(ModelView):
+
+	# Create directory for file fields to use
+	#file_path = os.path.join(current_app._get_current_object.config['UPLOAD_FOLDER']) #os.path.join(os.path.dirname(__file__), 'files')
+	file_path = os.path.join(os.path.dirname(__file__) ,'../../static')
+
+	try:
+		os.mkdir(file_path)
+	except OSError:
+		pass
+
+
 	can_delete = False
 	page_size = 20
 	can_view_details = True
 	column_exclude_list = ['date_created','language','education','date_of_sentence','place_of_conviction',
 	'place_of_birth_country','place_of_birth_region','place_of_birth_locality','place_of_offence_country',
 	'place_of_offence_region','place_of_offence_locality','distinctive_marks']
-
 	column_searchable_list = ['serial_number','last_name','first_name','offence']
-
+	column_editable_list = ['serial_number','last_name','first_name','offence']
 	create_modal = True
 	edit_modal = True
 	form_exclude_columns = ['date_created','transfers','penal_record','property','previous_convictions'
 	,'discharge']
 
 
-	#inline_models = ['nextofkin']
+	def _list_thumbnail(view,context,model , name):
+		if not model.picture:
+			return ''
+		return Markup('<img src="%s">' % url_for('static',
+			filename=form.thumbgen_filename(model.picture)))
+
+
+	column_formatters = {
+			'picture' : _list_thumbnail
+	} 
+
+	form_extra_fields = {
+			'picture' : form.ImageUploadField('Image',
+				base_path=file_path,
+				thumbnail_size = (100,100,True))
+	}
+
+
+	#inline_models = ['nextofkin',]
 
 	def is_accessible(self):
 		return True
@@ -224,7 +265,7 @@ admin.add_view(ModelView(Discharge,db.session))
 
 
 
-
+ 	
 
 
 
