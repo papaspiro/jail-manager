@@ -194,7 +194,7 @@ def send_pic(filename):
 '''
 class InmateView(ModelView):
 
-	column_searchable_list = [serial_number,last_name,first_name,middle_name,]
+	column_searchable_list = ['serial_number','last_name','first_name','middle_name']
 	# Create directory for file fields to use
 	#file_path = os.path.join(current_app._get_current_object.config['UPLOAD_FOLDER']) #os.path.join(os.path.dirname(__file__), 'files')
 	file_path = os.path.join(os.path.dirname(__file__) ,'../../static')
