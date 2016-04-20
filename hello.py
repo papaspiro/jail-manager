@@ -68,7 +68,7 @@ class Place(db.Model):
 	country = db.Column(db.String(160),nullable=False)
 	region = db.Column(db.String(160),nullable=False)
 	locality = db.Column(db.String(160),nullable=False)
-
+	postal_code = db.Column(db.String(10),nullable=False , default='')
 
 class FacilityType(db.Model):
 	id = db.Column(db.Integer(),primary_key=True)
@@ -108,6 +108,9 @@ class PostalAddress(db.Model):
 	#relationship
 	place = db.relationship(Place,backref="postal_addresses")
 
+
+
+
 '''
 class PostalAddressPlace(db.Model):
 	id = db.Column(db.Integer(),primary_key=True)
@@ -143,9 +146,11 @@ class Inmate(db.Model):
 	first_name = db.Column(db.String(120),nullable=False)
 	middle_name = db.Column(db.String(12))
 	last_name = db.Column(db.String(120),nullable=False)
-	date_of_birth = db.Column(db.Date())
 	distinctive_marks = db.Column(db.String(250))
-	place_of_birth_id = db.Column(db.Integer(),db.ForeignKey('place.id'))
+
+
+	date_of_birth = db.Column(db.Date())
+	#place_of_birth_id = db.Column(db.Integer(),db.ForeignKey('place.id'))
 	languages = db.Column(db.String(120))
 	education = db.Column(db.String(120))
 
@@ -153,6 +158,12 @@ class Inmate(db.Model):
 	nationality = db.Column(db.String(120),nullable=False)
 	tribe = db.Column(db.String(120),nullable=False)
 	thumbprint = db.Column(db.String(),nullable=False)
+
+
+
+	def __str__(self):
+		return "inmate  %s %s %s"  %(self.last_name , self.first_name ,self.serial_number) 
+
 
 class PenalRecord(db.Model):
 	id = db.Column(db.Integer(),primary_key=True)
@@ -179,10 +190,11 @@ class PenalRecord(db.Model):
 
 
 	#relationships
+
 	#relations
 	inmate = db.relationship(Inmate,backref='penal_records')
 	place_of_conviction = db.relationship(Place,backref = "penal_records")
-	place_of_committal = db.relationship(CorrectionalFacility,backref = "")
+	place_of_committal = db.relationship(CorrectionalFacility,backref = "penal_records")
 
 
 class NextOfKin(db.Model):
@@ -256,6 +268,7 @@ class Transfer(db.Model):
 	
 
 
+
 #bridge tables
 class NOKPostalAddress(db.Model):
 	id = db.Column(db.Integer(),primary_key=True)
@@ -288,6 +301,7 @@ class InmatePostalAddress(db.Model):
 	postal_address = db.relationship(PostalAddress,backref='inmate_postal_address')
 	inmate = db.relationship(Inmate,backref='inmate_postal_address')
 
+	inline_models = [PostalAddress]
 
 
 class InmateResidentialAddress(db.Model):
@@ -301,14 +315,14 @@ class InmateResidentialAddress(db.Model):
 
 
 
-#views
 
-admin = Admin(app,name='what the what', template_mode="bootstrap3")
-admin.add_view(FileAdmin(path,'/static/',name='Static Files'))
+
+
 
 
 
 class InmateView(ModelView):
+	column_auto_select_related = True
 	page_size = 50
 	
 	can_delete = True
@@ -318,9 +332,30 @@ class InmateView(ModelView):
 
 	#fast insitu edit
 	#column_editing_list = []
-	inline_models = (InmatePostalAddress,NextOfKin,ResidentialAddress)
+	inline_models = [PostalAddress]
+	column_auto_selected_related=True
+	
 
-	C
+	'''column_exclude_list = ['date_created','language','education','date_of_sentence','place_of_conviction',
+	'place_of_birth_country','place_of_birth_region','place_of_birth_locality','place_of_offence_country',
+	'place_of_offence_region','place_of_offence_locality','distinctive_marks']
+	'''
+
+
+	form_excluded_columns = ['previous_convictions','inmate_postal_address','inmate_residential_address','property',
+	'penal_records','discharge','transfers','previous_conviction','next_of_kin_id']
+
+
+	column_searchable_list = ['serial_number','last_name','first_name']
+	#column_editable_list = ['serial_number','last_name','first_name','offence']
+	
+
+	'''create_modal = True
+	edit_modal = True''
+	'''
+	
+
+	
 
 	def _list_thumbnail(view,context,model , name):
 		if not model.picture:
@@ -337,15 +372,11 @@ class InmateView(ModelView):
 			'picture' : form.ImageUploadField('Picture',
 				base_path=file_path,
 				thumbnail_size = (100,100,True))
+
 	}
-
-
-
-
 
 class ResidentialAddressView(ModelView):
 	page_size = 50
-	
 	can_delete = True
 	can_create = True
 	can_edit = True
@@ -368,15 +399,20 @@ class InmateResidentialAddressView(ModelView):
 
 
 
+
+
+#views
+admin = Admin(app,name='what the what', template_mode="bootstrap3")
+admin.add_view(FileAdmin(path,'/static/',name='Static Files'))
+
+
 admin.add_view(InmateView(Inmate,db.session))
-#	admin.add_view('Config',InmateView(Inmate,db.session)
 admin.add_view(ModelView(PenalRecord,db.session))
 admin.add_view(ModelView(NextOfKin,db.session))
 admin.add_view(ModelView(PreviousConviction,db.session))
 admin.add_view(ModelView(Discharge,db.session))
 admin.add_view(ModelView(Property,db.session))
 admin.add_view(ModelView(Transfer,db.session))
-
 
 
 
