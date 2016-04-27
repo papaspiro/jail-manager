@@ -208,6 +208,7 @@ class InmateView(ModelView):
 	can_delete = False
 	page_size = 20
 	can_view_details = True
+	
 	column_exclude_list = ['date_created','language','education','date_of_sentence','place_of_conviction',
 	'place_of_birth_country','place_of_birth_region','place_of_birth_locality','place_of_offence_country',
 	'place_of_offence_region','place_of_offence_locality','distinctive_marks']
