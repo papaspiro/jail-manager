@@ -241,6 +241,12 @@ class Transfer(Base):
 '''
 
 
+class CorrectionalFacility(Base):
+	 id = db.Column(db.Integer(),primary_key=True)
+	 name = db.Column(db.String(90))
+	 code = db.Column(db.String(4),unique=True)
+
+
 class Inmate(Base):
 	id = db.Column(db.Integer(),primary_key=True)
 	serial_number = db.Column(db.String(24),unique=True,nullable=False)
@@ -252,7 +258,6 @@ class Inmate(Base):
 
 
 	date_of_birth = db.Column(db.Date())
-	#place_of_birth_id = db.Column(db.Integer(),db.ForeignKey('place.id'))
 	languages = db.Column(db.String(120))
 	education = db.Column(db.String(120))
 
@@ -262,9 +267,8 @@ class Inmate(Base):
 	thumbprint = db.Column(db.String(),nullable=False)
 
 	inmate_residential_address_id = db.Column(db.Integer(),db.ForeignKey('inmate_residential_address.id',user_alter=True,))
-	inmate_postal_address_id = db.Column(db.Integer(),db.ForeignKey('inmate_postal_address.id',user_alter=True,))
-	residential_address = db.relationship('InmateResidentialAddress',foreign_keys=inmate_residential_address_id)
-	postal_address = db.relationship('InmatePostalAddress',foreign_keys=inmate_residential_address_id )
+	#residential_address = db.relationship('InmateResidentialAddress',foreign_keys=inmate_residential_address_id)
+	#postal_address = db.relationship('InmatePostalAddress',foreign_keys=inmate_residential_address_id )
 
 
 	def __str__(self):
@@ -291,7 +295,7 @@ class PenalRecord(Base):
 	offence = db.Column(db.String(500),nullable=False)
 	#place_of_conviction1 = db.Column(db.String('120'),nullable=False)
 	#court.id = db.Column(db.Integer(),db.ForeignKey('court.id'))
-	place_id = db.Column(db.Integer(),db.ForeignKey('place.id'))
+	#place_id = db.Column(db.Integer(),db.ForeignKey('place.id'))
 	correctional_facility_id = db.Column(db.Integer(),db.ForeignKey('correctional_facility.id'))
 
 
@@ -418,14 +422,13 @@ class InmatePostalAddress(Base):
 
 
 	#relationship
-	inmate = db.relationship(Inmate,foreign_keys=inmate_id,backref='postal_address')
+	inmate_pa = db.relationship(Inmate,foreign_keys=inmate_id,backref='postal_address')
 
-	inline_models = [PostalAddress]
+	#inline_models = [PostalAddress]
 
 
 class InmateResidentialAddress(Base):
 	id = db.Column(db.Integer(),primary_key=True)
-	#residential_address_id = db.Column(db.Integer(),db.ForeignKey('residential_address.id'))
 	inmate_id = db.Column(db.Integer(),db.ForeignKey('inmate.id'))
 	country = db.Column(db.String(160),nullable=False)
 	region = db.Column(db.String(160),nullable=False)
@@ -435,7 +438,7 @@ class InmateResidentialAddress(Base):
 
 	#relationship
 	#residential_address = db.relationship(ResidentialAddress,backref="inmate_residential_address")
-	inmates = db.relationship(Inmate,foreign_keys=inmate_id,backref='residential_address')
+	inmate_ra = db.relationship(Inmate,foreign_keys=inmate_id,backref='residential_address')
 
 
 
