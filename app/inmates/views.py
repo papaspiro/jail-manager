@@ -8,6 +8,9 @@ from flask import jsonify
 from werkzeug import secure_filename
 from flask_admin.contrib.sqla import ModelView
 
+
+import  os.path as op
+
 #from app import app
 from app import db
 from app import admin
@@ -27,6 +30,11 @@ from flask_admin.form import rules
 from flask_admin.contrib import sqla
 
 
+file_path = os.path.join(os.path.dirname(__file__) ,'static')
+
+path = op.join(op.join(op.dirname(__file__)),'static')
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 def allowed_file(filename):
 	return  '.' in filename and  filename.rsplit('.',1)[1] in app.config['ALLOWED_EXTENSIONS']
 
@@ -192,6 +200,8 @@ from .models import *
 def send_pic(filename):
     return send_from_directory('/path/to/static/files', filename)
 '''
+
+'''
 class InmateView(ModelView):
 
 	column_searchable_list = ['serial_number','last_name','first_name','middle_name']
@@ -249,6 +259,56 @@ class InmateView(ModelView):
 		#log activity/user attempting and time of action 
 		return
 
+'''
+
+
+
+class InmateView(ModelView):
+	column_auto_select_related = True
+	page_size = 50
+	
+	can_delete = True
+	can_create = True
+	can_edit = True
+	can_view_details = True
+
+	#fast insitu edit
+	#column_editing_list = []
+	inline_models = [InmatePostalAddress,InmateResidentialAddress]
+	column_auto_selected_related=True
+	
+
+	form_excluded_columns = ['previous_convictions','inmate_postal_address','inmate_residential_address','property',
+	'penal_records','discharge','transfers','previous_conviction','next_of_kin_id']
+
+
+	column_searchable_list = ['serial_number','last_name','first_name']
+	#column_editable_list = ['serial_number','last_name','first_name','offence']
+	
+
+
+	def _list_thumbnail(view,context,model , name):
+		if not model.picture:
+			return ''
+		return Markup('<img src="%s">' % url_for('static',
+			filename=form.thumbgen_filename(model.picture)))
+
+
+	column_formatters = {
+			'picture' : _list_thumbnail
+	} 
+
+	form_extra_fields = {
+			'picture' : form.ImageUploadField('Picture',
+				base_path=file_path,
+				thumbnail_size = (100,100,True))
+
+	}
+
+	form_ajax_refs = {
+
+
+	}
 
 class NextOfKinView(ModelView):
 	can_delete = False
@@ -258,6 +318,8 @@ class NextOfKinView(ModelView):
 
 
 admin.add_view(InmateView(Inmate,db.session))
+
+
 #admin.add_view(ModelView(InmatePostalAddress,db.session))
 #admin.add_view(ModelView(InmateResidentialAddress,db.session))
 #admin.add_view(NextOfKinView(NextOfKin,db.session))
