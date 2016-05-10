@@ -1,9 +1,9 @@
 import os 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-'''
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir ,'app.db')
-SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
+
+#SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir ,'app.db')
+#SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 
 
 
@@ -11,8 +11,8 @@ WTF_CSRF_ENABLED = True
 SECRET_KEY = 'who-jah-bless'
 
 UPLOAD_FOLDER = 'app/uploads'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
-'''
+#ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
 
 class Config:
 	SECRET_KEY = os.environ.get('SECRET_KEY') or 'its all about cryptosecr33t5'
@@ -22,6 +22,11 @@ class Config:
 	JAILER_ADMIN = os.environ.get('JAILER_ADMIN')
 	UPLOAD_FOLDER = 'static' #'app/uploads'
 	ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])	
+	SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
+
+	WTF_CSRF_ENABLED = True
+	SECRET_KEY = 'who-jah-bless'
+
 
 	@staticmethod
 	def init_app(app):
@@ -35,6 +40,7 @@ class DevelopmentConfig(Config):
 	MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
 	MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') 
 	SQLALCHEMY_DATABASE_URI =  'sqlite:///' + os.path.join(basedir, 'app.db')
+
 	# os.environ.get('DEV_DATABASE_URL') or \
        # 'sqlite:///' + os.path.join(basedir, 'app.db')
 
