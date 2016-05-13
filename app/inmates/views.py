@@ -9,6 +9,7 @@ from werkzeug import secure_filename
 from flask_admin.contrib.sqla import ModelView
 
 
+
 import  os.path as op
 
 #from app import app
@@ -17,7 +18,7 @@ from app import admin
 
 #from config import UPLOAD_FOLDER
 from app.inmates.forms import *
-from app.inmates.models import Inmate
+from app.inmates.models import *
 
 from app.inmates  import inmate_blueprint
 from flask import current_app
@@ -274,7 +275,7 @@ class InmateView(ModelView):
 
 	#fast insitu edit
 	#column_editing_list = []
-	inline_models = [InmatePostalAddress,InmateResidentialAddress]
+	inline_models = [InmatePostalAddress,InmateResidentialAddress,PreviousConviction]
 	column_auto_selected_related=True
 	
 
@@ -317,14 +318,18 @@ class NextOfKinView(ModelView):
 	column_exclude_list = ['date_created']
 
 
-admin.add_view(InmateView(Inmate,db.session))
+
+
 
 
 #admin.add_view(ModelView(InmatePostalAddress,db.session))
 #admin.add_view(ModelView(InmateResidentialAddress,db.session))
 #admin.add_view(NextOfKinView(NextOfKin,db.session))
+
+admin.add_view(InmateView(Inmate,db.session))
 admin.add_view(ModelView(PenalRecord,db.session))
 admin.add_view(ModelView(Transfer,db.session))
+#admin.add_view(ModelView(PreviousConviction,db.session))
 admin.add_view(ModelView(Discharge,db.session))
 
 
