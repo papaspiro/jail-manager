@@ -20,6 +20,7 @@ class Inmate(Base):
 	first_name = db.Column(db.String(120),nullable=False)
 	middle_name = db.Column(db.String(12))
 	last_name = db.Column(db.String(120),nullable=False)
+	alias  = db.Column(db.String(120))
 	distinctive_marks = db.Column(db.String(250))
 
 
@@ -29,16 +30,44 @@ class Inmate(Base):
 
 	complexion = db.Column(db.String(120),nullable=False)
 	nationality = db.Column(db.String(120),nullable=False)
-	tribe = db.Column(db.String(120),nullable=False)
-	thumbprint = db.Column(db.String(),nullable=False)
+	tribe = db.Column(db.String(120))
+	thumbprint = db.Column(db.String(120))
 
-	inmate_residential_address_id = db.Column(db.Integer(),db.ForeignKey('inmate_residential_address.id',user_alter=True,))
-	#residential_address = db.relationship('InmateResidentialAddress',foreign_keys=inmate_residential_address_id)
-	#postal_address = db.relationship('InmatePostalAddress',foreign_keys=inmate_residential_address_id )
+	#inmate_residential_address_id = db.Column(db.Integer(),db.ForeignKey('inmate_residential_address.id',user_alter=True,))
+	#inmate_postal_address_id = db.Column(db.Integer(),db.ForeignKey('inmate_postal_address.id',user_alter=True,))
+
+	#relationships
+	#residential_address = db.relationship('InmateResidentialAddress',backref="serial_number",uselist=False)
+	#postal_address = db.relationship('InmatePostalAddress',backref="serial_number",uselist=False )
+
 
 
 	def __str__(self):
-		return "inmate  %s %s %s"  %(self.last_name , self.first_name ,self.serial_number) 
+		return "inmate  %s  %s %s  alias %s"  %(self.last_name , self.first_name ,self.serial_number,self.alias) 
+
+class InmatePostalAddress(Base):
+	id = db.Column(db.Integer(),primary_key=True)
+	country = db.Column(db.String(160),nullable=False)
+	region = db.Column(db.String(160),nullable=False)
+	locality = db.Column(db.String(160),nullable=False)
+	postal_code = db.Column(db.String(10),nullable=False , default='0000')
+	box_number = db.Column(db.String(120),nullable=False)
+
+	inmate_id = db.Column(db.Integer(),db.ForeignKey('inmate.id'))
+	serial_number = db.relationship('Inmate',backref='postal_address')
+
+
+class InmateResidentialAddress(Base):
+	id = db.Column(db.Integer(),primary_key=True)
+	country = db.Column(db.String(160),nullable=False)
+	region = db.Column(db.String(160),nullable=False)
+	locality = db.Column(db.String(160),nullable=False)
+	postal_code = db.Column(db.String(10),nullable=False , default='0000')
+	box_number = db.Column(db.String(120),nullable=False)
+
+	#relationship
+	inmate_id = db.Column(db.Integer(),db.ForeignKey('inmate.id'))
+	serial_number = db.relationship('Inmate',backref='residential_address',uselist=False)
 
 
 class PenalRecord(Base):
@@ -68,31 +97,8 @@ class PenalRecord(Base):
 	#relationships
 
 	#relations
-	inmate = db.relationship(Inmate,backref='penal_records')
+	serial_number = db.relationship('Inmate',backref='penal_records')
 	##place_of_committal = db.relationship(CorrectionalFacility,backref = "penal_records")
-
-
-class NextOfKin(Base):
-	id = db.Column(db.Integer(),primary_key=True)
-	first_name = db.Column(db.String(120),nullable=False)
-	middle_name = db.Column(db.String(120))
-	last_name = db.Column(db.String(120) ,nullable=False)
-	relation = db.String(120)
-	po_address = db.Column(db.String(250))
-	res_address = db.Column(db.String(250))
-	email = db.Column(db.String(120),nullable=False)
-
-	#foreign keys
-	inmate_id = db.Column(db.Integer(),db.ForeignKey('inmate.id'))
-
-	#relations
-	inmate = db.relationship(Inmate,backref='next_of_kin')
-
-	def __str__(self):
-		return  " %s of %s" %(unicode(self.relation),unicode(self.inmate.serial_number))
-
-	def get_inmate_by_id(id):
-		pass
 
 class PreviousConviction(Base):
 	id = db.Column(db.Integer(),primary_key=True)
@@ -107,7 +113,7 @@ class PreviousConviction(Base):
 	correctional_facility_id = db.Column(db.Integer(),db.ForeignKey('correctional_facility.id'))
 
 	#relationship
-	inmate = db.relationship(Inmate,backref="previous_conviction")
+	serial_number = db.relationship(Inmate,backref="previous_conviction")
 	place_sentence = db.relationship(CorrectionalFacility,backref="previous_convictions")
 
 
@@ -127,7 +133,7 @@ class Property(Base):
 	items = db.Column(db.String(500))
 
 	#relationship
-	inmate = db.relationship(Inmate,foreign_keys=inmate_id,backref="property")
+	serial_number = db.relationship(Inmate,foreign_keys=inmate_id,backref="property")
 
 
 class Transfer(Base):
@@ -139,12 +145,28 @@ class Transfer(Base):
 	items_accompanying_inmate = db.Column(db.String(300))
 
 	#relationship
-	inmate = db.relationship(Inmate,foreign_keys=inmate_id,backref="transfers")
+	serial_number = db.relationship(Inmate,foreign_keys=inmate_id,backref="transfers")
 	
+class NextOfKin(Base):
+	id = db.Column(db.Integer(),primary_key=True)
+	first_name = db.Column(db.String(120),nullable=False)
+	middle_name = db.Column(db.String(120))
+	last_name = db.Column(db.String(120) ,nullable=False)
+	relation_to_inmate = db.Column(db.String(120),nullable=False )
+	email = db.Column(db.String(120),nullable=False)
 
+	#foreign keys
+	inmate_id = db.Column(db.Integer(),db.ForeignKey('inmate.id'))
 
+	#relations
+	serial_number = db.relationship(Inmate,backref='next_of_kin')
 
-#bridge tables
+	def __str__(self):
+		return  " %s of %s" %(unicode(self.relation),unicode(self.inmate.serial_number))
+
+	def get_inmate_by_id(id):
+		pass
+
 class NOKPostalAddress(Base):
 	id = db.Column(db.Integer(),primary_key=True)
 	#postal_addresses_id = db.Column(db.Integer(),db.ForeignKey('postal_address.id'))
@@ -156,8 +178,7 @@ class NOKPostalAddress(Base):
 	box_number = db.Column(db.String(120),nullable=False)
 
 	#relationships
-	next_of_kin = db.relationship(NextOfKin,backref="postal_address")
-
+	next_of_kin = db.relationship(NextOfKin,backref="postal_address",uselist=False)
 
 class NOKResidentialAddress(Base):
 	id = db.Column(db.Integer(),primary_key=True)
@@ -173,38 +194,7 @@ class NOKResidentialAddress(Base):
 
 	#relationships
 	#residential_address = db.relationship(ResidentialAddress,backref="nok_residential_address")
-	next_of_kin = db.relationship(NextOfKin,backref="residential_address")
-
-
-
-class InmatePostalAddress(Base):
-	id = db.Column(db.Integer(),primary_key=True)
-	inmate_id = db.Column(db.Integer(),db.ForeignKey('inmate.id'))
-	country = db.Column(db.String(160),nullable=False)
-	region = db.Column(db.String(160),nullable=False)
-	locality = db.Column(db.String(160),nullable=False)
-	postal_code = db.Column(db.String(10),nullable=False , default='0000')
-	box_number = db.Column(db.String(120),nullable=False)
-
-
-	#relationship
-	inmate_pa = db.relationship(Inmate,foreign_keys=inmate_id,backref='postal_address')
-
-	#inline_models = [PostalAddress]
-
-
-class InmateResidentialAddress(Base):
-	id = db.Column(db.Integer(),primary_key=True)
-	inmate_id = db.Column(db.Integer(),db.ForeignKey('inmate.id'))
-	country = db.Column(db.String(160),nullable=False)
-	region = db.Column(db.String(160),nullable=False)
-	locality = db.Column(db.String(160),nullable=False)
-	postal_code = db.Column(db.String(10),nullable=False , default='0000')
-	box_number = db.Column(db.String(120),nullable=False)
-
-	#relationship
-	#residential_address = db.relationship(ResidentialAddress,backref="inmate_residential_address")
-	inmate_ra = db.relationship(Inmate,foreign_keys=inmate_id,backref='residential_address')
+	next_of_kin = db.relationship(NextOfKin,backref="residential_address",uselist=False)
 
 
 

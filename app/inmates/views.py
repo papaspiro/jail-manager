@@ -275,12 +275,15 @@ class InmateView(ModelView):
 
 	#fast insitu edit
 	#column_editing_list = []
-	inline_models = [InmatePostalAddress,InmateResidentialAddress,PreviousConviction]
+	#inline_models = [InmatePostalAddress,InmateResidentialAddress]
+	inline_models = [InmateResidentialAddress,PreviousConviction]
+
 	column_auto_selected_related=True
+
 	
 
 	form_excluded_columns = ['previous_convictions','inmate_postal_address','inmate_residential_address','property',
-	'penal_records','discharge','transfers','previous_conviction','next_of_kin_id']
+	'penal_records','discharge','transfers','previous_conviction','next_of_kin_id','date_created']
 
 
 	column_searchable_list = ['serial_number','last_name','first_name']
@@ -308,7 +311,6 @@ class InmateView(ModelView):
 
 	form_ajax_refs = {
 
-
 	}
 
 class NextOfKinView(ModelView):
@@ -317,19 +319,18 @@ class NextOfKinView(ModelView):
 	can_view_details = True
 	column_exclude_list = ['date_created']
 
-
-
+	inline_models = [NOKPostalAddress,NOKResidentialAddress]
 
 
 
 #admin.add_view(ModelView(InmatePostalAddress,db.session))
 #admin.add_view(ModelView(InmateResidentialAddress,db.session))
-#admin.add_view(NextOfKinView(NextOfKin,db.session))
 
 admin.add_view(InmateView(Inmate,db.session))
+admin.add_view(NextOfKinView(NextOfKin,db.session))
 admin.add_view(ModelView(PenalRecord,db.session))
 admin.add_view(ModelView(Transfer,db.session))
-#admin.add_view(ModelView(PreviousConviction,db.session))
+admin.add_view(ModelView(PreviousConviction,db.session))
 admin.add_view(ModelView(Discharge,db.session))
 
 
